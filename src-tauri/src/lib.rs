@@ -1225,7 +1225,15 @@ mod tests {
         assert!(path.starts_with(fs::canonicalize(&folder).unwrap().join(".datasetop/media")));
         assert_eq!(fs::read(&path).unwrap(), b"\x89PNG\r\n\x1a\nplaceholder");
         assert!(!result.to_string().contains(&encoded));
-        assert!(result.to_string().contains(path.to_str().unwrap()));
+        // Compare parsed values: serialized JSON escapes Windows path separators.
+        assert!(result["content"][0]["text"]
+            .as_str()
+            .unwrap()
+            .contains(path.to_str().unwrap()));
+        assert_eq!(
+            result["structuredContent"]["data"],
+            "[binary media omitted]"
+        );
         fs::remove_dir_all(folder).unwrap();
     }
 
