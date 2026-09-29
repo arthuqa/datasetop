@@ -31,7 +31,9 @@ brew install --cask arthuqa/tap/datasetop
 ```
 
 The tap is [arthuqa/homebrew-tap](https://github.com/arthuqa/homebrew-tap) and
-is updated automatically from each GitHub release.
+is updated automatically from each GitHub release. The fully qualified name
+above trusts only this cask; Homebrew 6+ asks for confirmation if you install
+by short name (`datasetop`) instead.
 
 > The macOS builds are not notarized yet, so Gatekeeper blocks the first launch.
 > Open the app once, then allow it in **System Settings → Privacy & Security →

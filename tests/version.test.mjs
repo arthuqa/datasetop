@@ -6,8 +6,9 @@ import { dirname, join } from 'node:path';
 
 // Release workflow tags must match every manifest. Keeping the three files in
 // sync here avoids shipping a bundle whose version disagrees with its tag.
+// Normalize line endings: Windows checkouts convert manifests to CRLF.
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const read = relative => readFileSync(join(root, relative), 'utf8');
+const read = relative => readFileSync(join(root, relative), 'utf8').replace(/\r\n/g, '\n');
 
 const packageJson = JSON.parse(read('package.json'));
 const tauriConfig = JSON.parse(read('src-tauri/tauri.conf.json'));
