@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>datasetop</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="alternate icon" type="image/png" href="./favicon.png" />
+  <link rel="apple-touch-icon" href="./app-icon.png" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="appShell" class="app-shell">
+    <header id="titlebar" class="titlebar" data-tauri-drag-region>
+      <div class="mac-traffic window-no-drag">
+        <button id="macClose" class="traffic close" aria-label="Close" title="Close"></button>
+        <button id="macMin" class="traffic min" aria-label="Minimize" title="Minimize"></button>
+        <button id="macMax" class="traffic max" aria-label="Toggle full screen" title="Full screen"></button>
+      </div>
+
+      <div class="header-content window-no-drag">
+        <button class="folder-info" id="folderInfo" type="button" aria-label="Change folder" title="Change working folder">
+          <img id="folderIcon" class="tiny-folder" src="./icons/folder_macos.svg" alt="" />
+          <span id="folderName" class="folder-name" title="">No folder selected</span>
+        </button>
+      </div>
+
+      <div class="title-drag" data-tauri-drag-region></div>
+
+      <div class="header-actions window-no-drag" role="group" aria-label="Conversation controls">
+        <button id="clearBtn" class="icon-btn" type="button" title="Clear conversation" aria-label="Clear conversation">
+          <svg class="nav-icon" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M4 5.5h12M8 5.5V4h4v1.5M6 5.5l.7 10h6.6l.7-10M8.5 8.5v4M11.5 8.5v4" />
+          </svg>
+        </button>
+        <button id="settingsBtn" class="icon-btn" type="button" title="Settings" aria-label="Open settings">
+          <svg class="nav-icon" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M3 5h14M3 10h14M3 15h14" />
+            <circle cx="7" cy="5" r="2" fill="var(--surface-2)" /><circle cx="13" cy="10" r="2" fill="var(--surface-2)" /><circle cx="8" cy="15" r="2" fill="var(--surface-2)" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="system-controls window-no-drag">
+        <button id="winMin" class="sys-btn" type="button" title="Minimize" aria-label="Minimize"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12"/></svg></button>
+        <button id="winMax" class="sys-btn" type="button" title="Maximize" aria-label="Maximize"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4.5" y="4.5" width="11" height="11" rx="1"/></svg></button>
+        <button id="winClose" class="sys-btn close" type="button" title="Close" aria-label="Close"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15"/></svg></button>
+      </div>
+    </header>
+
+    <main class="chat-main">
+      <div id="chatLog" class="chat-log" role="log" aria-live="polite"></div>
+      <button id="jumpBottom" class="jump-bottom hidden" type="button">↓ New messages</button>
+
+      <form id="composer" class="composer" autocomplete="off" autocorrect="off" autocapitalize="off">
+        <textarea id="chatInput" class="chat-input" rows="1" placeholder="Message the agent…" aria-label="Message the agent" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
+        <button id="sendBtn" class="send-btn" type="submit" aria-label="Send message" title="Send message" disabled><svg class="icon-send" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11m-5-5 5 5-5 5" /></svg><svg class="icon-stop" viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="5" width="10" height="10" rx="2" /></svg></button>
+      </form>
+    </main>
+  </div>
+
+  <div id="settingsOverlay" class="settings-overlay hidden">
+    <div class="settings-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="settings-header">
+        <div>
+          <div id="settingsTitle" class="settings-title">Settings</div>
+          <p>Connect your model and choose its tools. Save applies to the open tab.</p>
+        </div>
+        <button id="settingsClose" class="icon-btn" type="button" title="Close settings" aria-label="Close settings"><svg class="nav-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15"/></svg></button>
+      </div>
+
+      <div class="settings-tabs" role="tablist" aria-label="Settings sections">
+        <button id="tabLlm" class="settings-tab" type="button" role="tab" aria-selected="true" aria-controls="panelLlm" tabindex="0">LLM</button>
+        <button id="tabMcp" class="settings-tab" type="button" role="tab" aria-selected="false" aria-controls="panelMcp" tabindex="-1">MCP</button>
+      </div>
+
+      <section id="panelLlm" class="settings-panel" role="tabpanel" aria-labelledby="tabLlm" tabindex="-1">
+        <form id="llmForm" class="settings-form">
+          <div class="settings-fields">
+            <p id="envNotice" class="env-notice hidden"></p>
+            <label class="field">
+              <span class="field-label">Base URL <span class="field-code">OPENAI_BASE_URL</span></span>
+              <input id="setBaseUrl" class="field-input" type="text" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="https://provider.example/v1" />
+            </label>
+            <label class="field">
+              <span class="field-label">Model <span class="field-code">OPENAI_MODEL</span></span>
+              <input id="setModel" class="field-input" type="text" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="Model ID" />
+            </label>
+            <label class="field">
+              <span class="field-label">API key (optional for local endpoints) <span class="field-code">OPENAI_API_KEY</span></span>
+              <input id="setApiKey" class="field-input" type="password" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="Provider API key" />
+            </label>
+            <label id="clearKeyOption" class="clear-key-option hidden"><input id="clearApiKey" type="checkbox" /> Remove saved API key</label>
+            <label class="field">
+              <span class="field-label">System prompt</span>
+              <textarea id="setSystemPrompt" class="field-input field-textarea" rows="6" placeholder="Describe how the agent should behave." spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
+            </label>
+          </div>
+          <div id="llmError" class="settings-error hidden" role="alert"></div>
+        </form>
+      </section>
+
+      <section id="panelMcp" class="settings-panel hidden" role="tabpanel" aria-labelledby="tabMcp" tabindex="-1">
+        <form id="mcpForm" class="settings-form">
+          <div class="settings-fields">
+            <div class="settings-section-title">MCP servers</div>
+             <div class="mcp-intro"><p class="mcp-hint">Your configured servers and their available tools. Servers are not connected until you inspect tools or send a message.</p>
+               <details class="info-popover"><summary aria-label="About MCP servers" title="About MCP servers">ⓘ</summary><div class="info-content">Only connect servers you trust. Local commands run on this computer; remote servers receive tool requests. The agent can access your folder only through the servers you configure. No server is bundled.</div></details></div>
+             <div id="mcpEmpty" class="mcp-empty">No MCP servers yet. The agent runs without tools until you add one.</div>
+             <div id="mcpServers" class="mcp-servers" role="group" aria-label="MCP servers"></div>
+             <div class="mcp-actions"><button id="addMcpBtn" class="mcp-add" type="button"><span aria-hidden="true">＋</span> Add server</button><button id="inspectMcpBtn" class="mcp-add" type="button">Inspect available tools</button></div>
+             <p id="mcpCatalogStatus" class="mcp-hint" role="status" aria-live="polite">Save changes before inspecting. Inspection connects to enabled servers and may open a browser for authorization.</p>
+             <div id="mcpCatalog" class="mcp-catalog" aria-label="Available MCP tools"></div>
+             <details class="mcp-help"><summary>Connection and security tips</summary><p>Enter an executable or a full HTTPS URL (localhost HTTP is allowed). Each local argument goes on its own line, never through a shell. Use <code class="mcp-token">${workspaceFolder}</code> in a command, argument, or environment value to refer to the selected working folder. Local servers run from that folder.</p></details>
+          </div>
+          <div id="mcpError" class="settings-error hidden" role="alert"></div>
+        </form>
+      </section>
+
+      <div class="settings-footer">
+        <button id="exportChatBtn" class="dialog-btn quiet export-btn" type="button" title="Export the conversation as a Markdown file"><svg class="nav-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v9m-3-3 3 3 3-3M4 13v3h12v-3"/></svg>Export chat</button>
+        <button id="settingsSave" class="dialog-btn primary save-btn" type="submit" form="llmForm" aria-keyshortcuts="Meta+S Control+S" title="Save LLM settings">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to build and publish (for example v0.6.0)
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+  # Tauri runs the AppImage tooling on Linux runners without FUSE.
+  APPIMAGE_EXTRACT_AND_RUN: 1
+  TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+
+jobs:
+  build:
+    name: ${{ matrix.label }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15
+            label: macOS Apple silicon
+            target: aarch64-apple-darwin
+            args: --target aarch64-apple-darwin
+          - os: macos-15-intel
+            label: macOS Intel
+            target: x86_64-apple-darwin
+            args: --target x86_64-apple-darwin
+          - os: ubuntu-22.04
+            label: Linux x86_64
+            target: ""
+            args: ""
+          - os: windows-2025
+            label: Windows x86_64
+            target: ""
+            args: ""
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+          key: ${{ matrix.target }}
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf xdg-utils libfuse2
+      - name: Check the tag against the app version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./package.json').version")
+          if [ "$TAG" != "v$version" ]; then
+            echo "::error::tag $TAG does not match version $version in package.json"
+            exit 1
+          fi
+          echo "Building datasetop $version from $TAG"
+      - name: Install frontend dependencies
+        run: npm ci
+      - uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ env.TAG }}
+          releaseName: "datasetop ${{ env.TAG }}"
+          releaseBody: |
+            Chat-first MCP agent for a local folder.
+
+            ### Install
+
+            macOS (Homebrew):
+
+            ```sh
+            brew install --cask arthuqa/tap/datasetop
+            ```
+
+            Windows: download the `.msi` installer or the NSIS `-setup.exe`.
+            Debian/Ubuntu: download the `.deb`. Fedora/RHEL: download the `.rpm`.
+            Other Linux: download the `.AppImage`, `chmod +x` it and run.
+
+            The macOS builds are not notarized yet. If macOS blocks the first
+            launch, allow it in System Settings → Privacy & Security → Open
+            Anyway, or run:
+
+            ```sh
+            xattr -dr com.apple.quarantine /Applications/datasetop.app
+            ```
+          releaseDraft: false
+          prerelease: false
+          uploadUpdaterJson: false
+          retryAttempts: 2
+          args: ${{ matrix.args }}

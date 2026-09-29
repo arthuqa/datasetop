@@ -1,0 +1,100 @@
+<!--
+  Square app-icon source framing the drawn artwork of logo.svg with a small
+  margin (the source viewBox has its own built-in padding, which made the mark
+  look tiny). Regenerate with:  npx tauri icon logo-icon.svg
+-->
+<svg
+  width="1024"
+  height="1024"
+  viewBox="19.0 -4.8 200.5 200.5"
+  xmlns="http://www.w3.org/2000/svg"
+>
+<defs>
+    <clipPath id="folderClip">
+      <path d="
+        M 44 25
+        H 93
+        C 98 25 101 28 105 32
+        L 114 41
+        C 117 44 120 45 125 45
+        H 190
+        C 200 45 207 52 207 62
+        V 149
+        C 207 159 200 166 190 166
+        H 44
+        C 34 166 27 159 27 149
+        V 42
+        C 27 32 34 25 44 25
+        Z
+      "/>
+    </clipPath>
+
+    <linearGradient id="lightBlue" x1="27" y1="25" x2="162" y2="166">
+      <stop offset="0%" stop-color="#2797FF"/>
+      <stop offset="100%" stop-color="#3F8FF2"/>
+    </linearGradient>
+
+    <linearGradient id="darkBlue" x1="90" y1="40" x2="207" y2="166">
+      <stop offset="0%" stop-color="#175CB9"/>
+      <stop offset="100%" stop-color="#10316F"/>
+    </linearGradient>
+  </defs>
+
+  <path
+    d="
+      M 44 25
+      H 93
+      C 98 25 101 28 105 32
+      L 114 41
+      C 117 44 120 45 125 45
+      H 190
+      C 200 45 207 52 207 62
+      V 149
+      C 207 159 200 166 190 166
+      H 44
+      C 34 166 27 159 27 149
+      V 42
+      C 27 32 34 25 44 25
+      Z
+    "
+    fill="url(#darkBlue)"
+  />
+
+  <g clip-path="url(#folderClip)">
+    <path
+      d="
+        M 20 15
+        H 170
+        C 136 47 105 59 86 82
+        C 65 107 68 138 45 164
+        C 39 171 28 173 20 170
+        Z
+      "
+      fill="url(#lightBlue)"
+    />
+  </g>
+
+  <circle cx="165" cy="79" r="10.5" fill="#FFFFFF"/>
+  <path
+    d="M 165 79 H 207"
+    stroke="#FFFFFF"
+    stroke-width="9"
+    stroke-linecap="round"
+  />
+
+  <circle cx="135" cy="105" r="10.5" fill="#FFFFFF"/>
+  <path
+    d="M 135 105 H 207"
+    stroke="#FFFFFF"
+    stroke-width="9"
+    stroke-linecap="round"
+  />
+
+  <circle cx="165" cy="131" r="10.5" fill="#FFFFFF"/>
+  <path
+    d="M 165 131 H 207"
+    stroke="#FFFFFF"
+    stroke-width="9"
+    stroke-linecap="round"
+  />
+</svg>
